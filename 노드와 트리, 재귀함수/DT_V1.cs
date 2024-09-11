@@ -9,9 +9,9 @@ namespace DependentTrial_Calculator_V1
 {
     public class DT_V1
     {
-        Form1 m_Form;
+        Form1 m_Form; // 윈폼과의 연계를 위한 Form1 변수
 
-        public static List<Node_10000> m_sl_NodeList;
+        public static List<Node_10000> m_sl_NodeList; // 생성된 노드(아이템)을 관리하기 위한 저장소(List)
         public static int m_sn_CaseCount;
 
         public int m_nPickCount;
