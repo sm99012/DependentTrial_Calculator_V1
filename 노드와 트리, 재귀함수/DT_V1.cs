@@ -11,16 +11,17 @@ namespace DependentTrial_Calculator_V1
     {
         Form1 m_Form; // 윈폼과의 연계를 위한 Form1 변수
 
-        public static List<Node_10000> m_sl_NodeList; // 생성된 노드(아이템)을 관리하기 위한 저장소(List)
-        public static int m_sn_CaseCount;
+        public static List<Node_10000> m_sl_NodeList; // 생성된 노드(아이템)을 관리하기 위한 저장소
+        
+        public static int m_sn_CaseCount; // 종속시행 경우의수 번호(개수)
+        public int m_nPickCount; // 노드(아이템) 획득 개수
 
-        public int m_nPickCount;
+        public decimal m_dTotal;              // 노드(아이템) 획득ㆍ미획득 총합
+        public decimal m_dProbability_Total;  // 각 경우 별 확률
+        public decimal m_dProbability;        // 각 경우 별 노드(아이템) 획득 확률
+        public decimal m_dDenominator_Before; // 종속시행 확률 계산에 사용되는 변수(분모 - 이전 노드 획득 확률(분자))
 
-        public decimal m_dTotal;
-        public decimal m_dProbability_Total;
-        public decimal m_dProbability;
-        public decimal m_dDenominator_Before;
-
+        // 윈폼에서 호출되는 DT_V1 클래스 생성자. 각종 변수 초기화
         public DT_V1(Form1 form)
         {
             m_Form = form;
@@ -37,20 +38,21 @@ namespace DependentTrial_Calculator_V1
         }
 
         // 다중 종속시행 확률 계산
-        // 1. 전체 nnode_count개 노드 중에서 npick_count개를 뽑을때 노드번호가 nnode_code인 노드를 뽑을 확률
-        public void DT_V1_Get(int nnode_count, int npick_count, int nnode_code)
+        // 전체 nnode_count개 노드(아이템) 중에서 npick_count개를 획득할때(뽑을때) 노드번호가 nnode_code인 노드(아이템)를 뽑을 확률
+        public void DT_V1_Get(int nnode_count, int npick_count, int nnode_code) // nnode_count : 전체 노드(아이템) 개수, npick_count : 노드(아이템) 획득 개수, nnode_code : 획득할 노드(아이템) 번호
         {
-            DT_V1_Init_All();
+            DT_V1_Init_All(); // 모든 변수를 초기화하는 함수. 단 m_sl_NodeList(생성된 노드(아이템)을 관리하기 위한 저장소) 에 저장된 노드 자체는 삭제되지 않지만 이전ㆍ이후 노드 번호는 초기화된다.(이중 연결 리스트 구조의 트리 초기화)
+                              // 이중 연결 리스트 구조의 트리 : 각각의 다중 종속시행 경우
 
-            int nindex = m_sl_NodeList.FindIndex(Node => Node.nCode == nnode_code);
+            int nindex = m_sl_NodeList.FindIndex(Node => Node.nCode == nnode_code); // m_sl_NodeList(생성된 노드(아이템)을 관리하기 위한 저장소) 에서 nnode_code 노드 번호를 가진 노드의 배열 반환
 
-            m_dProbability_Total = 0;
             DT_V1_Check_Get(npick_count, nnode_code);
             //Console.WriteLine("[전체 " + nnode_count + "개중 " + npick_count + "개를 뽑을때 " + nnode_code + "번 노드를 뽑을 확률] : " + (m_dProbability_Total * 100).ToString("000.0000000000000000") + "%\n");
             m_dTotal += m_dProbability_Total;
             m_Form.Total_Result_Calculate((m_dProbability_Total * 100).ToString("000.0000000000000000") + " %", 0);
 
         }
+        // 
         void DT_V1_Check_Get(int npick_count, int nnode_code)
         {
             if (npick_count > 1)
@@ -238,7 +240,7 @@ namespace DependentTrial_Calculator_V1
 
             return list;
         }
-        // 모든 노드 리스트를 초기화하는 함수
+        // 모든 노드(아이템) 리스트를 초기화하는 함수
         void DT_V1_Init()
         {
             for (int i = 0; i < m_sl_NodeList.Count; i++)
@@ -247,6 +249,7 @@ namespace DependentTrial_Calculator_V1
                 m_sl_NodeList[i].nCode_Before = -1;
             }
         }
+        // 모든 변수를 초기화하는 함수. 단 m_sl_NodeList(생성된 노드(아이템)을 관리하기 위한 저장소) 에 저장된 노드는 삭제되지 않지만 이중 연결 리스트 구조의 트리는 초기화된다.
         void DT_V1_Init_All()
         {
             m_sn_CaseCount = 0;
