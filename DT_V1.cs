@@ -99,11 +99,15 @@ namespace DependentTrial_Calculator_V1
                     {
                         if (list[i] != nNode_100index)
                         {
+                            // 사용하지 않은 노드(아이템)로 트리(이중 연결 리스트)를 구현(연결)
                             m_sl_NodeList[nNode_100index].nCode_After = m_sl_NodeList[list[i]].nCode;
                             m_sl_NodeList[list[i]].nCode_Before = m_sl_NodeList[nNode_100index].nCode;
-
+                            
+                            // 사용하지 않은 노드(아이템)list를 반환하는 함수
                             List<int> rlist = Return_Node_Index_Null();
+                            // 재귀함수(진행)
                             DT_V1_Reflection_Get(rlist, list[i], npick_count, nnode_code);
+                            // 한단계 되돌아가는 함수
                             DT_V1_Init(m_sl_NodeList[nNode_100index].nCode_After);
                         }
                     }
@@ -111,8 +115,12 @@ namespace DependentTrial_Calculator_V1
             }
             else if (m_nPickCount == npick_count)
             {
+                // 노드(아이템)번호가 nnode_code인 노드(아이템)가 제대로 연결되어 있는지 판단(제대로 트리를 구성하고 있는지 판단)
                 if (Check_Node_Exist(nnode_code, -1) == true)
+                {
+                    // 구성된 트리(노드(아이템) 경우의수)의 확률 정보 출력
                     DT_V1_Print2();
+                }
             }
             m_nPickCount -= 1;
         }
